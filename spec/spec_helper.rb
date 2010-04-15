@@ -8,3 +8,4 @@ end
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'build_watcher'
+require 'build_watcher/fake_arduino'
