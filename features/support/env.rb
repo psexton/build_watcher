@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + "/../../lib/build_watcher"
 require File.dirname(__FILE__) + "/../../lib/build_watcher/fake_arduino"
+require File.dirname(__FILE__) + "/../../lib/update_listeners/cli"
 
 gem 'cucumber'
 require 'cucumber'
@@ -7,6 +8,7 @@ gem 'rspec'
 require 'spec'
 
 require 'ruby-debug'
+require 'codefumes_harvester'
 
 
 Before do
@@ -16,4 +18,8 @@ Before do
   FileUtils.rm_rf   @tmp_root
   FileUtils.mkdir_p @home_path
   ENV['HOME'] = @home_path
+  CodeFumes::Project.mode(:test)
+  CodeFumes::Commit.mode(:test)
+  CodeFumes::Payload.mode(:test)
+  CodeFumes::Build.mode(:test)
 end
