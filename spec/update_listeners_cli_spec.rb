@@ -8,8 +8,4 @@ describe UpdateListeners::CLI, "execute" do
     @stdout_io.rewind
     @stdout = @stdout_io.read
   end
-  
-  it "should print default output" do
-    @stdout.should =~ /To update this executable/
-  end
 end

@@ -14,7 +14,7 @@ module UpdateListeners
       @output_device = stdout
       parse_options!(arguments)
 
-      device = ZigbeeDevice.new(@output_device)
+      device = BuildWatcher::ZigbeeDevice.new(@output_device)
       device.project_quantity
     end
 

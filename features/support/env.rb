@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + "/../../lib/build_watcher"
-require File.dirname(__FILE__) + "/../../lib/build_watcher/fake_arduino"
+require File.dirname(__FILE__) + "/../../lib/build_watcher/fake_serial_port"
 require File.dirname(__FILE__) + "/../../lib/update_listeners/cli"
+
+include BuildWatcher
 
 gem 'cucumber'
 require 'cucumber'

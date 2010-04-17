@@ -22,8 +22,7 @@ Feature: Updating listeners
     And the projects are removed
     And the projects are all being tracked on the serial device
     When I run update_listeners
-    Then it asks the serial device for the number of projects
-    And it passes the following messages to the serial device:
+    Then it passes the following update messages to the serial device:
       | message |
       | stuff1  |
       | stuff2  |

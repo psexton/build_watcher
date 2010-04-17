@@ -32,7 +32,7 @@ Given /^the projects have the following build statuses:$/ do |projects|
 end
 
 Given /^the projects are all being tracked on the serial device$/ do
-  @device = FakeArduino.new
+  @device = FakeSerialPort.new
   @projects.each do |project|
     @device.register_project(project.public_key, project.private_key)
   end
@@ -42,19 +42,11 @@ When /^I run update_listeners$/ do
   @stdout_io = StringIO.new
   UpdateListeners::CLI.execute(@stdout_io, [])
   @stdout_io.rewind
-  @output = @stdout_io.read.strip
+  @messages_sent = @stdout_io.read.strip
 end
 
-Then /^it asks the serial device for the number of projects$/ do
-  @output.should =~ "\002Q\003"
-end
-
-Then /^it asks the serial device for the CodeFumes authentication information for each project$/ do
-  @output.should =~ "\002Q\003"
-end
-
-Then /^it should pass the following messages to the serial device:$/ do |table|
-  pending # express the regexp above with the code you wish you had
+Then /^it passes the following update messages to the serial device:$/ do |table|
+  @messages_sent.should =~ /\002Q\003/
 end
 
 Then /^the projects are removed$/ do
