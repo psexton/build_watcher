@@ -8,6 +8,7 @@ gem 'cucumber'
 require 'cucumber'
 gem 'rspec'
 require 'spec'
+require 'spec/mocks'
 
 require 'ruby-debug'
 require 'codefumes_harvester'

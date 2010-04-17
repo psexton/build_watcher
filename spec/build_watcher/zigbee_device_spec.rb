@@ -14,7 +14,7 @@ describe ZigbeeDevice do
       connection = FakeSerialPort.new
       connection.stub!(:read_timeout=)
       connection.stub!(:read).and_return("")
-      connection.stub!(:read).and_return("\002N\037#{@project_count}\003", "")
+      connection.stub!(:read).and_return(Message.project_qty_response(@project_count), "")
 
       SerialPort.stub!(:new).and_return(connection)
       zd = ZigbeeDevice.new('/dev/something')
@@ -35,28 +35,31 @@ describe ZigbeeDevice do
     end
 
     it "requests the number of projects being tracked" do
-      @connection.stub!(:read).and_return("\002N\037#{@project_count}\003", "")
-      @connection.should_receive(:puts).with("\002Q\003")
+      @connection.stub!(:read).and_return(Message.project_qty_response(@project_count), "")
+      @connection.should_receive(:puts).with(Message.project_qty_request)
       @zigbee_device.project_quantity
     end
 
     it "returns number of projects being tracked by the zigbee device" do
-      @connection.stub!(:read).and_return("\002N\037#{@project_count}\003", "")
+      @connection.stub!(:read).and_return(Message.project_qty_response(@project_count), "")
       @zigbee_device.project_quantity.should == @project_count
     end
 
     it "handles extra messages on the serial buffer" do
-      project_info_message = "\002I\037PUBLIC_KEY\037PRIVATE_KEY\003"
-      @connection.stub!(:read).and_return("#{project_info_message}\002N\037#{@project_count}\003#{project_info_message}", "")
+      project_info_message = Message.project_info_message('PUBLIC_KEY', 'PRIVATE_KEY')
+      @connection.stub!(:read).and_return("#{project_info_message}#{Message.project_qty_response(@project_count)}#{project_info_message}", "")
       @zigbee_device.project_quantity.should == @project_count
     end
 
     it "handles multiple requests for quantity in a row" do
-      project_info_message = "\002I\037PUBLIC_KEY\037PRIVATE_KEY\003"
-      @connection.stub!(:read).and_return("#{project_info_message}\002N\037#{@project_count}\003#{project_info_message}", "")
+      project_info_message = Message.project_info_message('PUBLIC_KEY', 'PRIVATE_KEY')
+      proj_qty_response = Message.project_qty_response(@project_count)
+      @connection.stub!(:read).and_return("#{project_info_message}#{proj_qty_response}#{project_info_message}", "")
+
       @zigbee_device.project_quantity.should == @project_count
       new_project_count = 4
-      @connection.stub!(:read).and_return("#{project_info_message}\002N\037#{new_project_count}\003#{project_info_message}", "")
+      proj_qty_response = Message.project_qty_response(new_project_count)
+      @connection.stub!(:read).and_return("#{project_info_message}#{proj_qty_response}#{project_info_message}", "")
       @zigbee_device.project_quantity.should == new_project_count
     end
 

@@ -1,9 +1,5 @@
 module BuildWatcher
   class ZigbeeDevice
-    ASCII_STX = "\002"
-    ASCII_ETX = "\003"
-    ASCII_SEP = "\037"
-
     def initialize(device)
       @device = device
     end
@@ -17,7 +13,7 @@ module BuildWatcher
 
     private
       def request_project_count
-        @connection.puts "#{ASCII_STX}Q#{ASCII_ETX}"
+        @connection.puts Message.project_qty_request
       end
 
       def read_project_count
@@ -26,7 +22,7 @@ module BuildWatcher
           raise AppropriateMessageTypeNotFound, "No 'quantity' message type found on serial buffer."
         end
 
-        quantity_message.split(/#{ASCII_SEP}/).last.to_i
+        quantity_message.split(/#{Message::ASCII_SEP}/).last.to_i
       end
 
       def first_quantity_message_on_buffer
@@ -34,7 +30,7 @@ module BuildWatcher
       end
 
       def individual_messages
-        @connection.read.scan(/#{ASCII_STX}(.*?)#{ASCII_ETX}/).flatten
+        @connection.read.scan(/#{Message::ASCII_STX}(.*?)#{Message::ASCII_ETX}/).flatten
       end
 
       def serial_device(&block)

@@ -39,16 +39,19 @@ Given /^the projects are all being tracked on the serial device$/ do
 end
 
 When /^I run update_listeners$/ do
-  @stdout_io = StringIO.new
-  UpdateListeners::CLI.execute(@stdout_io, [])
-  @stdout_io.rewind
-  @messages_sent = @stdout_io.read.strip
+  # Overridden so our response is auto-populated for us in #puts
+  Message.stub!(:project_qty_request).and_return(Message.project_qty_request!(@projects.size))
+  SerialPort.stub!(:new).and_return(@device)
+  UpdateListeners::CLI.execute('/dev/someport', [])
 end
 
-Then /^it passes the following update messages to the serial device:$/ do |table|
-  @messages_sent.should =~ /\002Q\003/
+Then /^it broadcasts the build status for each project via the serial port$/ do
+  @projects.each do |project|
+    status_msg = Message.project_status(project.public_key, project.build_status)
+    debugger
+    @device.messages_sent.should include(status_msg)
+  end
 end
-
 Then /^the projects are removed$/ do
   @projects.each {|project| project.delete}
 end
