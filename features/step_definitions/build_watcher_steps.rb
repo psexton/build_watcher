@@ -41,17 +41,26 @@ end
 When /^I run update_listeners$/ do
   # Overridden so our response is auto-populated for us in #puts
   Message.stub!(:project_qty_request).and_return(Message.project_qty_request!(@projects.size))
+
+  all_messages = @projects.each_with_index.inject([]) do |messages, project_and_index|
+    project, index = project_and_index
+    messages << Message.project_info_request!(index, project.public_key, project.private_key)
+  end
+  Message.stub!(:project_info_request).and_return(*all_messages)
+
   SerialPort.stub!(:new).and_return(@device)
-  UpdateListeners::CLI.execute('/dev/someport', [])
+  UpdateListeners::CLI.execute(STDOUT, ['-d', '/dev/tty.usbserial-A800ejOJ'])
 end
 
-Then /^it broadcasts the build status for each project via the serial port$/ do
+Then /^it broadcasts the project build status via the serial port for each project$/ do
   @projects.each do |project|
+    project = CodeFumes::Project.find(project.public_key) # reinitiliaze object
     status_msg = Message.project_status(project.public_key, project.build_status)
-    debugger
     @device.messages_sent.should include(status_msg)
   end
 end
+
+# Yes, this should be in an 'after' block...
 Then /^the projects are removed$/ do
   @projects.each {|project| project.delete}
 end

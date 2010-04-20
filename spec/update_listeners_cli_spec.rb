@@ -3,9 +3,43 @@ require 'update_listeners/cli'
 
 describe UpdateListeners::CLI, "execute" do
   before(:each) do
-    @stdout_io = StringIO.new
-    UpdateListeners::CLI.execute(@stdout_io, [])
-    @stdout_io.rewind
-    @stdout = @stdout_io.read
+    @serial_port = FakeSerialPort.new
+    @zgb_device = BuildWatcher::ZigbeeDevice.new('/dev/something')
+    @project = CodeFumes::Project.new(:public_key => 'pub', :private_key => 'priv')
+    @project.stub!(:build_status).and_return("running")
+
+    SerialPort.stub!(:new).and_return(@serial_port)
+    BuildWatcher::ZigbeeDevice.stub!(:new).and_return(@zgb_device)
+    CodeFumes::Project.stub!(:find).and_return(@project)
+  end
+
+  context "3 projects have been registered on the 'server' device and CodeFumes.com" do
+    before(:each) do
+      @project_quantity = 3
+      Message.stub!(:project_qty_request).and_return(Message.project_qty_request!(@project_quantity))
+      Message.stub!(:project_info_request).and_return(Message.project_info_request!(0,'pub','priv'))
+    end
+
+    it "requests the quantity of projects from the serial device" do
+      @zgb_device.should_receive(:project_quantity).and_return(@project_quantity)
+      UpdateListeners::CLI.execute(STDOUT, [])
+    end
+
+    it "requests the project information from the serial device for each project" do
+      project_info = OpenStruct.new({:private_key => 'priv', :public_key => 'pub'})
+      @zgb_device.should_receive(:project_info).exactly(3).times.and_return(project_info)
+      UpdateListeners::CLI.execute(STDOUT, [])
+    end
+
+    it "it requests the project build status from CodeFumes for each project" do
+      CodeFumes::Project.should_receive(:find).exactly(@project_quantity).times.and_return(@project)
+      @project.should_receive(:build_status).exactly(@project_quantity).times.and_return('running')
+      UpdateListeners::CLI.execute(STDOUT, [])
+    end
+
+    it "it broadcasts the status of each project via the serial device" do
+      @zgb_device.should_receive(:broadcast_status).exactly(@project_quantity).times
+      UpdateListeners::CLI.execute(STDOUT, [])
+    end
   end
 end

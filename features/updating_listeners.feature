@@ -19,7 +19,7 @@ Feature: Updating listeners
       | aBcd       | running      |
       | eFGh       | passing      |
       | iJKL       | failed       |
-    And the projects are removed
     And the projects are all being tracked on the serial device
     When I run update_listeners
-    Then it broadcasts the build status for each project via the serial port
+    Then it broadcasts the project build status via the serial port for each project
+    And the projects are removed
