@@ -9,6 +9,7 @@ module BuildWatcher
     def project_quantity
       serial_device do
         request_project_count
+        sleep(0.5)
         read_project_count
       end
     end
@@ -16,6 +17,7 @@ module BuildWatcher
     def project_info(project_index)
       serial_device do
         request_project_info(project_index)
+        sleep(0.5)
         read_project_info
       end
     end

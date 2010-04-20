@@ -37,7 +37,7 @@ describe Message do
 
   describe '#project_status' do
     specify {
-      expected = "#{Message::MSG_START}S#{Message::MSG_SEP}pub#{Message::MSG_SEP}r#{Message::MSG_END}"
+      expected = "#{Message::MSG_START}S#{Message::MSG_SEP}pub#{Message::MSG_SEP}R#{Message::MSG_END}"
       Message.project_status('pub', 'running').should == expected
     }
 

@@ -38,10 +38,10 @@ module BuildWatcher
       end
 
       def project_status(public_key, status)
-        unless status && [:nobuilds,:running, :failed, :success].include?(status.to_sym)
+        unless status && [:nobuilds,:running, :failed, :successful].include?(status.to_sym)
           raise ArgumentError, "Invalid status supplied (provided: '#{status}')"
         end
-        wrap separate("S", public_key, status.split(//).first)
+        wrap separate("S", public_key, status.split(//).first.upcase)
       end
 
       private
