@@ -4,6 +4,9 @@ README.txt
 Rakefile
 bin/update_listeners
 lib/build_watcher.rb
+lib/build_watcher/fake_serial_port.rb
+lib/build_watcher/message.rb
+lib/build_watcher/zigbee_device.rb
 lib/update_listeners/cli.rb
 script/console
 script/destroy
