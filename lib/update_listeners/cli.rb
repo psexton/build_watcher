@@ -12,10 +12,10 @@ module UpdateListeners
     ASCII_US  = 0x1F
 
     def self.execute(stdout, arguments=[])
-      @output_device = stdout
+      @stdout = stdout
       parse_options!(arguments)
 
-      device = BuildWatcher::ZigbeeDevice.new(@output_device)
+      device = BuildWatcher::ZigbeeDevice.new(@raw_device_string)
       device.project_quantity.times do |project_index|
         project_info = device.project_info(project_index)
         project = CodeFumes::Project.find(project_info.public_key)
@@ -27,7 +27,7 @@ module UpdateListeners
       OptionParser.new do |opts|
         opts.banner = <<-BANNER.gsub(/^          /,'')
 
-          Usage: #{File.basename($0)} [options]
+          Usage: #{File.basename($0)} -d /dev/<some_device_string>
 
           Options are:
         BANNER
@@ -35,8 +35,14 @@ module UpdateListeners
         opts.on("-h", "--help",
                 "Show this help message.") { @stdout.puts opts; exit }
         opts.on("-d", "--device [RAW_DEVICE]",
-                "Override the default serial device used (default: STDOUT)") {|device| @output_device = device}
+                "Override the default serial device used") {|device| @raw_device_string = device}
+
         opts.parse!(arguments)
+
+        if @raw_device_string.nil? || @raw_device_string.empty?
+          @stdout.puts opts
+          exit
+        end
       end
 
     end
