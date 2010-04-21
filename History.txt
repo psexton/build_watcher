@@ -1,3 +1,7 @@
-=== 0.0.1 / 21-APR-2010 / 9ef8534bc8e6719bd5e9fb01dc13b7d699288990
+=== 0.1.1 / 21-APR-2010 / 9ef8534bc8e6719bd5e9fb01dc13b7d699288990
+
+* Added files forgotten in manifest
+
+=== 0.1.0 / 21-APR-2010 / 9ef8534bc8e6719bd5e9fb01dc13b7d699288990
 
 * Initial release
