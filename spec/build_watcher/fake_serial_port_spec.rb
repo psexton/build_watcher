@@ -13,7 +13,7 @@ describe FakeSerialPort do
   end
 
   describe '#messages_sent' do
-    it "initializes #messages_sent to an empty String" do
+    it "initializes #messages_sent to an empty Array" do
       device.messages_sent.should == []
     end
   end
