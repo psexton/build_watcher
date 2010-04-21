@@ -1,4 +1,3 @@
-=== 0.0.1 2010-04-15
+=== 0.0.1 / 21-APR-2010 / 9ef8534bc8e6719bd5e9fb01dc13b7d699288990
 
-* 1 major enhancement:
-  * Initial release
+* Initial release
