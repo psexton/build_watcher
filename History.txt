@@ -1,3 +1,7 @@
+=== 0.1.4 / 2010-04-22 / 4530cc52ffee5af001bb2c167714cc8c6724ac15
+
+* Adding retries for failed serial IO attempts
+
 === 0.1.3 / 2010-04-22
 
 * Updated hoe spec so dependencies work correctly
