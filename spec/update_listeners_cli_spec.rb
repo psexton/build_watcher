@@ -22,7 +22,7 @@ describe UpdateListeners::CLI, "execute" do
 
     it "requests the quantity of projects from the serial device" do
       @zgb_device.should_receive(:project_quantity).and_return(@project_quantity)
-      UpdateListeners::CLI.execute(STDOUT, [])
+      UpdateListeners::CLI.execute(STDOUT, ["-d", "/dev/something"])
     end
 
     it "requests the project information from the serial device for each project" do
