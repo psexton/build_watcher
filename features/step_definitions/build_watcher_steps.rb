@@ -1,9 +1,9 @@
-Given /^there are projects with the following public keys set up at Codefumes.com:$/ do |projects|
+Given /^there are (\d+) projects set up at Codefumes\.com$/ do |project_count|
   repository = CodeFumesHarvester::SourceControl.new('./')
   payload_content = repository.payload_between("HEAD^", "HEAD")
 
-  @projects = projects.hashes.map do |project_hash|
-    project = CodeFumes::Project.new(:public_key => project_hash["public_key"])
+  @projects = project_count.to_i.times.inject([]) do |projects, project_index|
+    project = CodeFumes::Project.new
     unless project.save
       raise "Project not saved to test.codefumes.com"
     end
@@ -13,19 +13,19 @@ Given /^there are projects with the following public keys set up at Codefumes.co
                                      :content     => payload_content
                                     )
     raise "Payload not saved" unless payload.save
-    project
+    projects << project
   end
 end
 
-Given /^the projects have the following build statuses:$/ do |projects|
-  projects.hashes.each do |project_info|
-    project = CodeFumes::Project.find(project_info["public_key"])
+Given /^the projects have the following build statuses:$/ do |build_statuses|
+  @projects.each_with_index do |project, index|
+    project = CodeFumes::Project.find(project.public_key)
     build = CodeFumes::Build.new(:public_key  => project.public_key,
                                  :private_key => project.private_key,
                                  :commit_identifier => CodeFumes::Commit.latest_identifier(project.public_key),
                                  :name => 'ie7',
                                  :started_at => Time.now,
-                                 :state => 'running'
+                                 :state => build_statuses.hashes[index]["build_status"]
                                 )
     raise "Build not saved" unless build.save
   end

@@ -9,16 +9,12 @@ Feature: Updating listeners
        3. send the status to the serial device
 
   Scenario: sending the project's build status
-    Given there are projects with the following public keys set up at Codefumes.com:
-      | public_key |
-      | aBcd       |
-      | eFGh       |
-      | iJKL       |
+    Given there are 3 projects set up at Codefumes.com
     And the projects have the following build statuses:
-      | public_key | build_status |
-      | aBcd       | running      |
-      | eFGh       | passing      |
-      | iJKL       | failed       |
+      | build_status |
+      | running      |
+      | successful   |
+      | failed       |
     And the projects are all being tracked on the serial device
     When I run update_listeners
     Then it broadcasts the project build status via the serial port for each project
