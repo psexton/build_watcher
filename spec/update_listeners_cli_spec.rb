@@ -3,13 +3,12 @@ require 'update_listeners/cli'
 
 describe UpdateListeners::CLI, "execute" do
   before(:each) do
-    @serial_port = FakeSerialPort.new
-    @zgb_device = BuildWatcher::ZigbeeDevice.new('/dev/something')
+    @zigbee_device = BuildWatcher::ZigbeeDevice.new('/dev/something')
     @project = CodeFumes::Project.new(:public_key => 'pub', :private_key => 'priv')
     @project.stub!(:build_status).and_return("running")
 
-    SerialPort.stub!(:new).and_return(@serial_port)
-    BuildWatcher::ZigbeeDevice.stub!(:new).and_return(@zgb_device)
+    SerialPort.stub!(:new).and_return(FakeSerialPort.new)
+    BuildWatcher::ZigbeeDevice.stub!(:new).and_return(@zigbee_device)
     CodeFumes::Project.stub!(:find).and_return(@project)
   end
 
@@ -21,13 +20,13 @@ describe UpdateListeners::CLI, "execute" do
     end
 
     it "requests the quantity of projects from the serial device" do
-      @zgb_device.should_receive(:project_quantity).and_return(@project_quantity)
+      @zigbee_device.should_receive(:project_quantity).and_return(@project_quantity)
       UpdateListeners::CLI.execute(STDOUT, [])
     end
 
     it "requests the project information from the serial device for each project" do
       project_info = OpenStruct.new({:private_key => 'priv', :public_key => 'pub'})
-      @zgb_device.should_receive(:project_info).exactly(3).times.and_return(project_info)
+      @zigbee_device.should_receive(:project_info).exactly(3).times.and_return(project_info)
       UpdateListeners::CLI.execute(STDOUT, [])
     end
 
@@ -38,7 +37,7 @@ describe UpdateListeners::CLI, "execute" do
     end
 
     it "it broadcasts the status of each project via the serial device" do
-      @zgb_device.should_receive(:broadcast_status).exactly(@project_quantity).times
+      @zigbee_device.should_receive(:broadcast_status).exactly(@project_quantity).times
       UpdateListeners::CLI.execute(STDOUT, [])
     end
   end
