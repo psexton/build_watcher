@@ -1,3 +1,7 @@
+=== 0.1.3 / 2010-04-22
+
+* Updated hoe spec so dependencies work correctly
+
 === 0.1.2 / 2010-04-21 / 7578a285145418053d914ce9cb724d231ec4a182
 
 * Version bump to 0.1.2

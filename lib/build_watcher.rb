@@ -6,7 +6,7 @@ require 'build_watcher/message'
 require 'serialport'
 
 module BuildWatcher
-  VERSION = '0.1.2'
+  VERSION = '0.1.3'
 
   class AppropriateMessageTypeNotFound < StandardError; end
 end
