@@ -1,5 +1,6 @@
 module BuildWatcher
   class ZigbeeDevice
+    MAX_SERIAL_DEVICE_ATTEMPTS = 5
     def initialize(device)
       @device = device
       @connection = "USE #serial_device INSTEAD OF CONNECTION DIRECTLY"
@@ -56,7 +57,6 @@ module BuildWatcher
           raise AppropriateMessageTypeNotFound, "No 'project info' message type found on serial buffer."
         end
 
-        #Struct.new("ProjectInfo", :public_key, :private_key)
         Struct::ProjectInfo.new(*project_info.split(/#{Message::MSG_SEP}/).slice(1,3))
       end
 
@@ -71,7 +71,15 @@ module BuildWatcher
       def serial_device(&block)
         @connection = SerialPort.new(@device, 9600)
         @connection.read_timeout = -1
-        yield @connection
+
+        i = 1
+        begin
+          yield @connection
+        rescue AppropriateMessageTypeNotFound => e
+          i += 1
+          retry unless i > MAX_SERIAL_DEVICE_ATTEMPTS
+          raise e
+        end
       ensure
         @connection.close
       end

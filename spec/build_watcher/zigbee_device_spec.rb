@@ -6,7 +6,6 @@ describe ZigbeeDevice do
 
   before(:each) do
     connection.stub!(:read_timeout=)
-    connection.stub!(:read).and_return("")
     SerialPort.stub!(:new).and_return(connection)
   end
 
@@ -54,6 +53,15 @@ describe ZigbeeDevice do
     end
 
     context "when the serial buffer does not contain a quantity response" do
+      before(:each) do
+        connection.stub!(:read).and_return("")
+      end
+
+      it "attempts to resend and read the request #{ZigbeeDevice::MAX_SERIAL_DEVICE_ATTEMPTS} times" do
+        zigbee_device.should_receive(:request_project_count).exactly(ZigbeeDevice::MAX_SERIAL_DEVICE_ATTEMPTS).times
+        lambda{ zigbee_device.project_quantity}.should raise_error(AppropriateMessageTypeNotFound)
+      end
+
       it "raises a AppropriateMessageTypeNotFound error" do
         lambda {
           zigbee_device.project_quantity
