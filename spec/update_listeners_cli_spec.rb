@@ -2,6 +2,10 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 require 'update_listeners/cli'
 
 describe UpdateListeners::CLI, "execute" do
+  def execute_script
+    UpdateListeners::CLI.execute(STDOUT, ['-d', '/dev/some_device'])
+  end
+
   before(:each) do
     @zigbee_device = BuildWatcher::ZigbeeDevice.new('/dev/something')
     @project = CodeFumes::Project.new(:public_key => 'pub', :private_key => 'priv')
@@ -21,24 +25,24 @@ describe UpdateListeners::CLI, "execute" do
 
     it "requests the quantity of projects from the serial device" do
       @zigbee_device.should_receive(:project_quantity).and_return(@project_quantity)
-      UpdateListeners::CLI.execute(STDOUT, [])
+      execute_script
     end
 
     it "requests the project information from the serial device for each project" do
       project_info = OpenStruct.new({:private_key => 'priv', :public_key => 'pub'})
       @zigbee_device.should_receive(:project_info).exactly(3).times.and_return(project_info)
-      UpdateListeners::CLI.execute(STDOUT, [])
+      execute_script
     end
 
     it "it requests the project build status from CodeFumes for each project" do
       CodeFumes::Project.should_receive(:find).exactly(@project_quantity).times.and_return(@project)
       @project.should_receive(:build_status).exactly(@project_quantity).times.and_return('running')
-      UpdateListeners::CLI.execute(STDOUT, [])
+      execute_script
     end
 
     it "it broadcasts the status of each project via the serial device" do
       @zigbee_device.should_receive(:broadcast_status).exactly(@project_quantity).times
-      UpdateListeners::CLI.execute(STDOUT, [])
+      execute_script
     end
   end
 end
