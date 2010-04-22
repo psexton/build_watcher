@@ -21,9 +21,9 @@ Hoe.plugin :git
 $hoe = Hoe.spec 'build_watcher' do
   self.developer 'Tom Kersten', 'tom@whitespur.com'
   self.developer 'Michael Thies', 'michaelthies78@gmail.com'
-  extra_deps     = [['codefumes','>= 0.1.8'], ['serialport', '= 1.0.2']]
-  extra_dev_deps = [['hoe-git', '>= 1.3.0']]
-  git_remotes    = ['gnr']
+  self.extra_deps     = [['codefumes','>= 0.1.8'], ['serialport', '= 1.0.2']]
+  self.extra_dev_deps = [['hoe-git', '>= 1.3.0'], ['rspec', '1.3.0']]
+  self.git_remotes    = ['gnr']
 end
 
 Dir['tasks/**/*.rake'].each { |t| load t }
