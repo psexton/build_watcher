@@ -1,9 +1,9 @@
-=== 0.1.2 / 2010-04-21 / 4baee836a7d9290c800bb794846cd6637de385bd
+=== 0.1.2 / 2010-04-21 / 7578a285145418053d914ce9cb724d231ec4a182
 
 * Version bump to 0.1.2
 * Updated README, authors, and small spec issue
 
-=== 0.1.1 / 21-APR-2010 / 9ef8534bc8e6719bd5e9fb01dc13b7d699288990
+=== 0.1.1 / 21-APR-2010 / afeaf7c9f104aa230caff92b04247fbf68c37cba
 
 * Added files forgotten in manifest
 
